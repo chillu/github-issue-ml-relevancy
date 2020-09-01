@@ -3,76 +3,83 @@ import json
 from urllib.request import urlopen, Request
 
 def fetch(url, user, github_api_token, requester=urlopen):
+    """
+    Fetches params for a single issue or pull request,
+    emulating same values as queried through BigQuery on the data set used for model training.
+    """
+    
     # Basic query sanitisation
     url = url.replace('"', '')
 
     query = """
 query { 
-resource(url:"%s") { 
-    ...on PullRequest {
-    __typename
-    title
-    body
-    databaseId
-    author {
-        login
-    }
-    baseRepository {
-        name
+    resource(url:"%s") { 
+        ...on PullRequest {
+        __typename
+        url
+        title
+        body
         databaseId
-        owner {
-        ...on Organization {
-            name
-            databaseId
-        }
-        login
-        }
-    }
-    comments(first:100) {
-        totalCount
-        nodes {
         author {
             login
         }
-        body
-        }
-    }
-    timelineItems(itemTypes:[ISSUE_COMMENT, MERGED_EVENT, CLOSED_EVENT, REOPENED_EVENT]) {
-        totalCount
-    }
-    }
-    ...on Issue {
-    __typename
-    title
-    body
-    databaseId
-    author {
-        login
-    }
-    repository {
-        databaseId
-        name
-        owner {
-        ...on Organization {
-            databaseId
+        baseRepository {
             name
-        }
-        }
-    }
-    comments(first:100) {
-        totalCount
-        nodes {
-        author {
+            databaseId
+            owner {
+            ...on Organization {
+                name
+                databaseId
+            }
             login
+            }
         }
-        body
+        comments(first:100) {
+            totalCount
+            nodes {
+            author {
+                login
+            }
+            body
+            }
+        }
+        timelineItems(itemTypes:[ISSUE_COMMENT, MERGED_EVENT, CLOSED_EVENT, REOPENED_EVENT]) {
+            totalCount
+        }
+        }
+        ...on Issue {
+            __typename
+            url
+            title
+            body
+            databaseId
+            author {
+                login
+            }
+            repository {
+                databaseId
+                name
+                owner {
+                    ...on Organization {
+                        databaseId
+                        name
+                    }
+                }
+            }
+            comments(first:100) {
+                totalCount
+                nodes {
+                    author {
+                        login
+                    }
+                    body
+                }
+            }
+            timelineItems(itemTypes:[ISSUE_COMMENT, CLOSED_EVENT, REOPENED_EVENT]) {
+                totalCount
+            }
         }
     }
-    timelineItems(itemTypes:[ISSUE_COMMENT, CLOSED_EVENT, REOPENED_EVENT]) {
-        totalCount
-    }
-    }
-}
 }
     """ % (url)
 
@@ -137,6 +144,7 @@ def _get_content_params(resource, user):
         'actor_events_count': len(actor_comments),
         'comments_count': resource['comments']['totalCount'],
         'comments_body_count': len(''.join([comment['body'] for comment in comments])),
+        'actor_comments_count': len(actor_comments),
         'actor_comments_body_count': len(''.join([comment['body'] for comment in actor_comments])),
     }
 
