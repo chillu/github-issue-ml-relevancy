@@ -14,8 +14,7 @@ if GITHUB_API_TOKEN is None:
 
 def main():
     """
-    Fetches params for a single issue or pull request,
-    emulating same values as queried through BigQuery on the data set used for model training.
+    Predicts the score for a single issue or pull request
     """
     parser = argparse.ArgumentParser(prog="fetch")
     parser.add_argument("url", help="issue or pull request url")
@@ -24,12 +23,15 @@ def main():
 
     args = parser.parse_args()
 
-    res = fetch(
+    params = fetch(
         url=args.url,
         user=args.user,
         github_api_token=GITHUB_API_TOKEN
     )
-    print(json.dumps(res))
+    if args.verbose:
+        print(json.dumps(params))
+
+    
 
 if __name__ == "__main__":
     main()
