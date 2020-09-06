@@ -1,0 +1,3 @@
+fastai
+python-dotenv
+google-cloud-bigquery
