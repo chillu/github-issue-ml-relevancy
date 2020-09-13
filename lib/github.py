@@ -59,6 +59,7 @@ query {
             databaseId
             owner {
                 ...on Organization {
+                    id
                     name
                     databaseId
                 }
