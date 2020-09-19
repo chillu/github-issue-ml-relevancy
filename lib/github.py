@@ -202,11 +202,11 @@ query {
         'creator_org_pull_requests_opened_count': colls[creator_login]['totalPullRequestContributions'],
         'creator_org_issues_opened_count': colls[creator_login]['totalIssueContributions'],
         'creator_repo_issues_opened_count': _get_contrib_count(colls[creator_login]['issueContributionsByRepository'], repo_name),
-        'creator_repo_pull_requests_opened_count': _get_contrib_count(colls[creator_login]['issueContributionsByRepository'], repo_name),
+        'creator_repo_pull_requests_opened_count': _get_contrib_count(colls[creator_login]['pullRequestContributionsByRepository'], repo_name),
         'viewer_org_pull_requests_opened_count': colls[viewer_login]['totalPullRequestContributions'],
         'viewer_org_issues_opened_count': colls[viewer_login]['totalIssueContributions'],
         'viewer_repo_issues_opened_count': _get_contrib_count(colls[viewer_login]['issueContributionsByRepository'], repo_name),
-        'viewer_repo_pull_requests_opened_count': _get_contrib_count(colls[viewer_login]['issueContributionsByRepository'], repo_name),
+        'viewer_repo_pull_requests_opened_count': _get_contrib_count(colls[viewer_login]['pullRequestContributionsByRepository'], repo_name),
     }
 
 def _get_contrib_count(items, repo_name):
