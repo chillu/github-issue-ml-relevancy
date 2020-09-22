@@ -42,10 +42,12 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    data = request.get_json()
+
     # Retrieve params from Github
     # Let Flask handle error handling on params
     params = github.fetch(
-        url=request.form['url'],
+        url=data['url'],
         viewer_login=VIEWER_LOGIN,
         github_api_token=GITHUB_API_TOKEN
     )
@@ -59,7 +61,7 @@ def predict():
     learn = load_learner(MODEL_PATH)
     row, pred, probs = learn.predict(test_df.iloc[0])
 
-    return jsonify({'pred': pred.item()})
+    return jsonify({'pred': pred.item(), 'prob': probs[pred.item()].item()})
 
 if __name__ == '__main__':
     app.run(debug=False, port=os.getenv('PORT', 5000))

@@ -66,7 +66,8 @@ def main():
     learn = load_learner(MODEL_PATH)
     row, pred, probs = learn.predict(test_df.iloc[0])
 
-    print('Prediction: %d' % pred)
+    print('Prediction: %d (Probability: %f)' %
+          (pred, probs[pred.item()].item()))
     
 
 if __name__ == "__main__":

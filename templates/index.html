@@ -1,12 +1,93 @@
 <html>
     <head>
         <title>Github Issue Prediction</title>
+        <script type="application/javascript">
+        window.onload = () => {
+            console.log('load');
+            function handleSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const button = form.querySelector('[type="submit"]');
+                button.value = 'Predicting...';
+                const config = {
+                    method: form.method, 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({url: form.url.value})
+                }
+                fetch(form.action, config)
+                    .then(response => response.json())
+                    .then(data => {
+                        button.value = 'Predict';
+                        showResponse(data);
+                    })
+                    .catch(err => {
+                        button.value = 'Predict';
+                        showError(err);
+                    })
+            };
+
+            function showResponse(data) {
+                const el = document.getElementById('response');
+                var probNice;
+                if (data.prob > 0.7) {
+                    probNice = 'very';
+                } else if (data.prob > 0.3) {
+                    probNice = 'somewhat';
+                } else {
+                    probNice = 'not very';
+                }
+                var predNice = (data.pred == 1) ? 'interested' : 'not interested';
+                var emoticon = (data.pred == 1) ? '👍' : '👎';
+                el.innerHTML = `${emoticon} I'm ${probNice} sure that you're ${predNice} in this issue`;
+                el.className = (data.pred == 1) ? 'interested' : 'not-interested';
+            }
+
+            function showError(err) {
+                const el = document.getElementById('response');
+                el.innerHTML = err;
+            }
+
+            document.body.addEventListener('submit', handleSubmit);
+        };
+        </script>
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+        <style type="text/css">
+        html, body, form, input {
+            font-size: 1.2em;
+            font-family: 'Fira Code', monospace;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        input[name="url"] {
+            display: block;
+            padding: 0.5em;
+        }
+        input[type="submit"] {
+            display: block;
+            padding: 0.5em;
+            background-color: green;
+            color: white;
+            border-radius: 4px;
+        }
+        #response.interested {
+            color: green;
+        }
+        #response.not-interested {
+            color: red;
+        }
+        </style>
     </head>
     <body>
-        <form action="/predict" method="POST">
-            <label for="url">URL</label>
-            <input name="url" type="text" />
-            <input type="submit" value="Predict" />
-        </form>
+        <div class="container">
+            <form action="/predict" method="POST">
+                <input name="url" type="text" placeholder="Github Issue or Pull Request URL" />
+                <input type="submit" value="Predict" />
+            </form>
+            <div id="response"></div>
+        </div>
     </body>
 </html>
