@@ -2,6 +2,9 @@ from lib import github
 from fastai.tabular.all import *
 from flask import Flask, request, jsonify, render_template
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MODEL_PATH = './model/model.pkl'
 

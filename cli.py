@@ -7,6 +7,9 @@ import json
 import os
 from lib import github
 from fastai.tabular.all import *
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MODEL_PATH='./model/model.pkl'
 
