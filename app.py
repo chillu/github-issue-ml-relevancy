@@ -58,8 +58,5 @@ def predict():
 
     return jsonify({'pred': pred.item()})
 
-
-learn = load_learner('model/model.pkl')
-
 if __name__ == '__main__':
     app.run(debug=False, port=os.getenv('PORT', 5000))
