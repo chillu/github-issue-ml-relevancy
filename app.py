@@ -1,6 +1,7 @@
 from lib import github
 from fastai.tabular.all import *
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, abort, render_template
+from werkzeug.exceptions import HTTPException
 import os
 from dotenv import load_dotenv
 
@@ -46,11 +47,16 @@ def predict():
 
     # Retrieve params from Github
     # Let Flask handle error handling on params
-    params = github.fetch(
-        url=data['url'],
-        viewer_login=VIEWER_LOGIN,
-        github_api_token=GITHUB_API_TOKEN
-    )
+    try:
+        params = github.fetch(
+            url=data['url'],
+            viewer_login=VIEWER_LOGIN,
+            github_api_token=GITHUB_API_TOKEN
+        )
+    except ValueError:
+        abort(400, description='Not a valid URL')
+    except:
+        abort(500, description='Could not retrieve data from Github')
 
     # Create DataFrame
     test_df = pd.DataFrame.from_dict([params])
@@ -62,6 +68,21 @@ def predict():
     row, pred, probs = learn.predict(test_df.iloc[0])
 
     return jsonify({'pred': pred.item(), 'prob': probs[pred.item()].item()})
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 if __name__ == '__main__':
     app.run(debug=False, port=os.getenv('PORT', 5000))

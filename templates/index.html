@@ -15,6 +15,17 @@
                     body: JSON.stringify({url: form.url.value})
                 }
                 fetch(form.action, config)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                const err = data.description ? 
+                                    data.description 
+                                    : 'Server error';
+                                throw new Error(err);
+                            });
+                        }
+                        return response;
+                    })
                     .then(response => response.json())
                     .then(data => {
                         button.value = 'Predict';

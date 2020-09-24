@@ -1,6 +1,7 @@
 import re
 import json
 from urllib.request import urlopen, Request
+from urllib.parse import urlparse
 
 
 def fetch(url, viewer_login, date_from=None, date_to=None, github_api_token=None, requester=None):
@@ -18,6 +19,10 @@ def fetch(url, viewer_login, date_from=None, date_to=None, github_api_token=None
             req.add_header("Authorization", "Bearer {}".format(github_api_token))
             # Let Python handle standard exceptions
             return urlopen(req)
+    
+    url_parts = urlparse(url)
+    if url_parts.netloc != 'github.com':
+        raise ValueError('Not a valid url')
     
     item_params = _get_item_params(
         requester,
