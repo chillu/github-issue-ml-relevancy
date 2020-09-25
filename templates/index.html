@@ -38,18 +38,19 @@
 
             function showResponse(data) {
                 const el = document.getElementById('response');
-                var probNice;
-                if (data.prob > 0.7) {
-                    probNice = 'sure';
-                } else if (data.prob > 0.3) {
-                    probNice = 'somewhat sure';
+                var msg;
+                // Anything above 0 declares some interest,
+                // but looking at the actual model we set the threshold slightly higher
+                if (data.pred > 0.3) {
+                    msg = `👍 I reckon you're quite interested in this`;
+                } else if (data.pred > 0.1) {
+                    msg = `👍 You might be interested in this`;
                 } else {
-                    probNice = 'not very sure';
+                    msg = `👎 You're probably not interested in this`;
                 }
-                var predNice = (data.pred == 1) ? 'interested' : 'not interested';
-                var emoticon = (data.pred == 1) ? '👍' : '👎';
-                el.innerHTML = `${emoticon} I'm ${probNice} that you're ${predNice} in this issue`;
-                el.className = (data.pred == 1) ? 'interested' : 'not-interested';
+                msg += ' (Score: ' + Number.parseFloat(data.pred).toPrecision(2) + ')';
+                el.innerHTML = msg;
+                el.className = (data.pred > 0.1) ? 'interested' : 'not-interested';
             }
 
             function showError(err) {

@@ -64,10 +64,12 @@ def predict():
     # Reapply preprocessing
     test_df = _preprocess(test_df)
 
+    # Scores were normalised to a 0-1 range,
+    # so predictions in this range express level of interest
     learn = load_learner(MODEL_PATH)
-    row, pred, probs = learn.predict(test_df.iloc[0])
+    row, pred, _ = learn.predict(test_df.iloc[0])
 
-    return jsonify({'pred': pred.item(), 'prob': probs[pred.item()].item()})
+    return jsonify({'pred': pred.item()})
 
 
 @app.errorhandler(HTTPException)
