@@ -21,7 +21,7 @@ See it in action (predictions for the `chillu` github user):
 * Train a neural network with both categorical and continuous data, with a regression learner
 * Provide a prediction service for this user
 
-The approach was also [presented](https://slides.com/chillu/deck-85620f) in Sept 2020 at the [virtual StripeConEU conference](https://stripecon.eu).
+The approach was also [presented](https://slides.com/chillu/deck-85620f) in Sept 2020 at the [virtual StripeConEU conference](https://stripecon.eu) - see [talk recording](https://youtu.be/Ujv2kkmaTLE).
 
 ## Data Collection
 
